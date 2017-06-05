@@ -1,0 +1,196 @@
+#include <iostream>
+
+#include <fstream>
+
+#include <string>
+
+#include <sstream>
+
+#include <iomanip>
+
+
+using namespace std;
+
+
+//converts binary to hexadecimal??
+int bin_to_dec (string bin);
+
+
+int bin_to_dec (string bin)
+
+{
+  int result =0 ;
+
+   for(size_t count = 0;count < bin.length() ; ++count)
+
+   {
+    result *=2;
+    
+    result += bin[count]=='1'? 1 :0;
+  }
+  //??
+   return result;
+}
+
+
+
+
+int main ()
+{
+
+//  string bin("00000001000000111111001100001000");
+stringstream ss;
+
+//  ss << "0x" << hex << setw(8) << setfill('0')  << bin_to_dec(bin);
+
+//  string hexVal = "";
+
+//  ss >> hexVal;
+
+//  string hexVal(ss.str());
+
+//  cout << hexVal << endl;
+
+
+  string line = "";
+
+  string cur_time = "";
+
+  string mosi = "";
+
+  string miso = "";
+
+  string clock = "";
+
+  string active = "";
+
+
+  string miso_bin = "";
+
+  string mosi_bin = "";
+
+  string miso_hex = "";
+
+  string mosi_hex = "";
+
+  string last_clock = "0";
+
+  int count = 0;
+
+
+  ifstream input_logic;
+
+  ofstream output_hex;
+
+  input_logic.open("../Protocol Data/My Captures/Capture 1.csv");
+
+  output_hex.open ("example.txt");
+
+
+  if (input_logic.is_open())
+
+  {
+    getline(input_logic,line);
+
+       cout << line << endl;
+   
+    while (input_logic.good())
+
+       {
+      last_clock = clock;
+        
+      getline (input_logic, cur_time, ',' );
+
+              getline (input_logic, mosi, ',' );
+
+              getline (input_logic, miso, ',' );
+
+              getline (input_logic, clock, ',' );
+        
+      getline (input_logic, active);
+//Check for clock change and get miso/mosi values
+//
+              cout << "\""<< miso << "\" \"" << mosi << "\"" << endl;
+
+              cout << mosi.find_first_not_of(" ") << endl;
+
+	      mosi = mosi.substr(mosi.find_first_not_of(" "),1);	//??
+	
+      miso = miso.substr(miso.find_first_not_of(" "),1);	//??
+	
+      clock = clock.substr(clock.find_first_not_of(" "),1);
+       	      active = active.substr(active.find_first_not_of(" "),1); //??
+
+
+              if (last_clock == "0" && clock == "1" && count < 8)
+   	
+      {
+        mosi_bin = mosi_bin + mosi;
+
+        	       miso_bin = miso_bin + miso;
+	       
+        count++;
+      }
+ 
+	      else if (last_clock == "0" && clock == "1")
+
+	      {
+        cout << mosi_bin << "<--MOSI:MISO-->" << miso_bin << endl;
+
+	       
+        cout << bin_to_dec(mosi_bin) << "<--MOSI_dec:MISO_dec-->" << bin_to_dec(miso_bin) << endl;
+
+
+	               ss.clear();
+                       
+//        ss << mosi_bin;
+
+	               ss << "0x" << hex << setw(2) << setfill('0')  << bin_to_dec(mosi_bin);   //??
+               
+        ss >> mosi_bin;
+
+
+                       ss.clear();
+//
+                       ss << miso_bin;
+               
+        ss << "0x" << hex << setw(2) << setfill('0')  << bin_to_dec(miso_bin);
+               
+        ss >> miso_bin;
+
+               
+        cout << mosi_bin << "<--MOSI_bin:MISO_bin-->" << miso_bin << endl << endl;
+               
+        count = 0;
+               
+        mosi_bin = "";
+               
+        miso_bin = "";
+      }
+
+                       else
+      
+		       {
+        //Do nothing
+      }
+
+                       /*      input_logic >> mosi;
+
+			       input_logic >> miso;
+
+			       input_logic >> clock;
+			 
+      input_logic >> active;
+*/
+		       
+//      cout << "time: " << cur_time << "  mosi: " << mosi << "  miso: " << miso << "  clock: " << clock << "  active: " << active << endl;
+    }
+  }
+
+
+	      input_logic.close();
+	    
+  output_hex.close();
+
+	      return 0;
+}
