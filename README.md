@@ -1,2 +1,3 @@
 # Canon-Samsung-lens-mount
-# contains arduino program interface to control canon 28-135mm lens 
+Contains arduino program interface to control canon 28-135mm lens 
+Part of project to build a universal adapter between canon lenses and samsung cameras.
